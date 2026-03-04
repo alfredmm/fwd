@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handshake AI - Project Hedgehog Assessment</title>
+    <meta name="description" content="Handshake AI: Experts shaping AI">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2030%2030%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%209C0%205.8497%200%204.27456%200.613088%203.0713C1.15238%202.01289%202.01289%201.15238%203.0713%200.613088C4.27456%200%205.8497%200%209%200H21C24.1503%200%2025.7254%200%2026.9287%200.613088C27.9871%201.15238%2028.8476%202.01289%2029.3869%203.0713C30%204.27456%2030%205.8497%2030%209V21C30%2024.1503%2030%2025.7254%2029.3869%2026.9287C28.8476%2027.9871%2027.9871%2028.8476%2026.9287%2029.3869C25.7254%2030%2024.1503%2030%2021%2030H9C5.8497%2030%204.27456%2030%203.0713%2029.3869C2.01289%2028.8476%201.15238%2027.9871%200.613088%2026.9287C0%2025.7254%200%2024.1503%200%2021V9Z%22%20fill%3D%22%23D3FB52%22%20%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M18.1066%206L16.9001%2012.8625L13.3562%2015.7591L15.0711%206H11.6359L8.4585%2024H11.8937L12.776%2019.0201L16.3328%2016.1014L14.9292%2024H18.3663L21.5418%206H18.1066Z%22%20fill%3D%22%23052326%22%20%2F%3E%0A%20%20%3C%2Fsvg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #1e293b;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .logo svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #475569;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #0f172a;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Main Layout */
+        .container {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 2rem 1rem;
+            position: sticky;
+            top: 73px;
+            height: calc(100vh - 73px);
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            padding: 0 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 1rem;
+            border-radius: 8px;
+            color: #475569;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: default;
+        }
+
+        .sidebar-item:hover {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .sidebar-item.active {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .sidebar-badge {
+            margin-left: auto;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            background-color: #e2e8f0;
+            color: #475569;
+        }
+
+        .beta-badge {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            max-width: calc(100% - 280px);
+            overflow-x: auto;
+        }
+
+        .assessment-header {
+            margin-bottom: 2rem;
+        }
+
+        .assessment-title {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .assessment-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: #e2e8f0;
+            color: #334155;
+        }
+
+        .badge.success {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .badge.warning {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+
+        .description-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .description-card p {
+            color: #334155;
+            margin-bottom: 1rem;
+        }
+
+        .attempts-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            color: #1e40af;
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 8px;
+            background-color: #bfdbfe;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 50%;
+            background-color: #2563eb;
+            border-radius: 999px;
+        }
+
+        /* Form Styles */
+        .form-container {
+            max-width: 800px;
+        }
+
+        .question-panel {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .question-number {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6366f1;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .image-container {
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .option-item:hover {
+            background-color: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .option-item input[type="radio"] {
+            margin-top: 0.25rem;
+            accent-color: #6366f1;
+        }
+
+        .option-text {
+            flex: 1;
+            color: #334155;
+            font-size: 0.95rem;
+        }
+
+        .submit-button {
+            background-color: #0f172a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 2rem;
+        }
+
+        .submit-button:hover {
+            background-color: #1e293b;
+        }
+
+        .submit-button:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .survey-images {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .survey-images p {
+            margin: 0;
+        }
+
+        .survey-images strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #e2e8f0;
+            margin: 1.5rem 0;
+        }
+
+        /* Loading State */
+        .loading-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+            
+            .main-content {
+                max-width: 100%;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 9C0 5.8497 0 4.27456 0.613088 3.0713C1.15238 2.01289 2.01289 1.15238 3.0713 0.613088C4.27456 0 5.8497 0 9 0H21C24.1503 0 25.7254 0 26.9287 0.613088C27.9871 1.15238 28.8476 2.01289 29.3869 3.0713C30 4.27456 30 5.8497 30 9V21C30 24.1503 30 25.7254 29.3869 26.9287C28.8476 27.9871 27.9871 28.8476 26.9287 29.3869C25.7254 30 24.1503 30 21 30H9C5.8497 30 4.27456 30 3.0713 29.3869C2.01289 28.8476 1.15238 27.9871 0.613088 26.9287C0 25.7254 0 24.1503 0 21V9Z" fill="#D3FB52"/>
+                <path d="M18.1066 6L16.9001 12.8625L13.3562 15.7591L15.0711 6H11.6359L8.4585 24H11.8937L12.776 19.0201L16.3328 16.1014L14.9292 24H18.3663L21.5418 6H18.1066Z" fill="#052326"/>
+            </svg>
+            <span>Handshake AI</span>
+        </div>
+        <div class="nav-links">
+            <a href="#">Dashboard</a>
+            <a href="#" class="active">Projects</a>
+            <a href="#">Payments</a>
+            <a href="#">Referrals</a>
+            <div class="user-menu">
+                <div class="avatar">JD</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Projects</div>
+                <div class="sidebar-item active">Project Hedgehog</div>
+                <div class="sidebar-item">Project Otter</div>
+                <div class="sidebar-item">Project Diamond</div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Fellows</div>
+                <div class="sidebar-item">All Fellows <span class="sidebar-badge">24</span></div>
+                <div class="sidebar-item">Onboarding</div>
+                <div class="sidebar-item">Active</div>
+                <div class="sidebar-item">Offboarded</div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Training</div>
+                <div class="sidebar-item active">Assessment</div>
+                <div class="sidebar-item">Canvas Routing <span class="beta-badge sidebar-badge">BETA</span></div>
+                <div class="sidebar-item">Messages</div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Data Quality</div>
+                <div class="sidebar-item">Pass@K</div>
+                <div class="sidebar-item">Cosine Similarity</div>
+                <div class="sidebar-item">N-Gram</div>
+                <div class="sidebar-item">Online Availability</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="assessment-header">
+                <h1 class="assessment-title">Project Hedgehog Assessment</h1>
+                <div class="assessment-meta">
+                    <span class="badge success">2 of 4 attempts used</span>
+                    <span>Version 29</span>
+                    <span>Last updated Feb 13, 2026</span>
+                </div>
+                
+                <div class="description-card">
+                    <p>This assessment combines multiple task simulation quizzes to verify your readiness across various annotation and evaluation tasks.</p>
+                    <p>You'll have two attempts to complete this assessment. While we aren't able to provide individual feedback, we encourage you to take your time and make sure you fully understand the instructions and guidelines outlined in this assessment before submitting.</p>
+                </div>
+
+                <div class="attempts-indicator">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M10 6V10L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <span>You have <strong>2 attempts remaining</strong>. Minimum passing score: <strong>8/??</strong></span>
+                </div>
+            </div>
+
+            <form class="form-container">
+                <!-- Question 2 -->
+                <div class="question-panel">
+                    <div class="question-number">Question 1 of 11</div>
+                    <h2 class="question-title">Task context: In this task, workers compare two generated videos against a given prompt and a reference video...</h2>
+                    
+                    <div class="survey-images">
+                        <p><strong>Original</strong><br>
+                        <img src="https://raw.githubusercontent.com/amchishty/survey-images/refs/heads/main/image_001.png" alt="Original"></p>
+                        <p><strong>Restoration A</strong><br>
+                        <img src="https://raw.githubusercontent.com/amchishty/survey-images/refs/heads/main/image_002.png" alt="Restoration A"></p>
+                        <p><strong>Restoration B</strong><br>
+                        <img src="https://raw.githubusercontent.com/amchishty/survey-images/refs/heads/main/image_003.png" alt="Restoration B"></p>
+                    </div>
+
+                    <div class="question-title" style="font-size: 1rem; margin-top: 1rem;">
+                        Based on the task context and guidelines above, what is the issue with this decision?
+                    </div>
+
+                    <div class="options-grid">
+                        <label class="option-item">
+                            <input type="radio" name="q2">
+                            <span class="option-text">Both reconstructions are very similar overall, and any visible issues are minor, so selecting one over the other is unnecessary and this should have been rated as a tie.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q2">
+                            <span class="option-text">Reconstruction B includes noticeable distortion and motion blur on the runner, which affects the main subject and makes it less faithful to the reference despite looking cleaner elsewhere.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q2">
+                            <span class="option-text">Reconstruction B is sharper and clearer across most frames, and brief imperfections should not outweigh stronger overall visual quality.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q2">
+                            <span class="option-text">The differences between the reconstructions are mostly related to background detail rather than the runner, so the overall selection comes down to reviewer preference.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="question-panel">
+                    <div class="question-number">Question 2 of 11</div>
+                    <h2 class="question-title">Task context: In this task, workers compare two generated videos...</h2>
+                    
+                    <div class="survey-images">
+                        <p><strong>Original</strong><br>
+                        <img src="https://raw.githubusercontent.com/amchishty/survey-images/refs/heads/main/image_004.png" alt="Original"></p>
+                        <p><strong>Reconstruction A</strong><br>
+                        <img src="https://raw.githubusercontent.com/amchishty/survey-images/refs/heads/main/image_005.png" alt="Reconstruction A"></p>
+                        <p><strong>Reconstruction B</strong><br>
+                        <img src="https://raw.githubusercontent.com/amchishty/survey-images/refs/heads/main/image_006.png" alt="Reconstruction B"></p>
+                    </div>
+
+                    <div class="options-grid">
+                        <label class="option-item">
+                            <input type="radio" name="q4">
+                            <span class="option-text">Reconstruction B is closer because it appears sharper in the foreground crowd, even if some background details differ slightly.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q4">
+                            <span class="option-text">Reconstruction A is clearly closer to the original; Reconstruction B introduces visible distortions, including removing the head of one person from the frame, which makes selecting B (or Tie) incorrect.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q4">
+                            <span class="option-text">Both reconstructions contain motion blur in the crowd, so neither is definitively closer and the correct choice should have been Tie.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q4">
+                            <span class="option-text">Reconstruction B maintains similar colors and lighting to the original, which outweighs the structural issues present in the frame.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="question-panel">
+                    <div class="question-number">Question 3 of 11</div>
+                    <div class="image-container">
+                        <img src="https://raw.githubusercontent.com/amchishty/survey-images/main/redo%20in%20github/Screenshot-2026-01-16-at-5-49-46-PM.png" alt="Bounding box example">
+                    </div>
+                    
+                    <div class="options-grid">
+                        <label class="option-item">
+                            <input type="radio" name="q6">
+                            <span class="option-text">Object 2 is incorrect because it includes an unrelated object; Object 5 is incorrect because the bounding box is too large.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q6">
+                            <span class="option-text">Object 2 is incorrect because it cuts off part of the person; Object 5 is acceptable since the entire person is included.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q6">
+                            <span class="option-text">Object 5 is incorrect because it includes background elements; Object 3 is also incorrect because the box is too narrow.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q6">
+                            <span class="option-text">Object 1 and Object 4 are both incorrect because they overlap nearby background objects.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="question-panel">
+                    <div class="question-number">Question 4 of 11</div>
+                    
+                    <p><strong>Original Image</strong></p>
+                    <div class="image-container">
+                        <img src="https://raw.githubusercontent.com/amchishty/survey-images/main/redo%20in%20github/corporate-team-group-photo-nyc.png" alt="Corporate team group photo">
+                    </div>
+                    
+                    <hr>
+                    
+                    <p><strong>Altered Isolations</strong></p>
+                    <div class="image-container">
+                        <img src="https://raw.githubusercontent.com/amchishty/survey-images/main/redo%20in%20github/Diverse-women-in-NYC-themed-collage.png" alt="Diverse women in NYC themed collage">
+                    </div>
+
+                    <div class="options-grid">
+                        <label class="option-item">
+                            <input type="radio" name="q7">
+                            <span class="option-text">The café image, because the person's pose and body position differ from the source image.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q7">
+                            <span class="option-text">The park image, because the background environment is significantly different from the original scene.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q7">
+                            <span class="option-text">The bus stop image, because the lighting in the image has changed.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q7">
+                            <span class="option-text">The bookstore image, because the person's facial features do not match any individual in the source image.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 9 -->
+                <div class="question-panel">
+                    <div class="question-number">Question 5 of 11</div>
+                    
+                    <p><strong>Input</strong></p>
+                    <div class="image-container">
+                        <img src="https://raw.githubusercontent.com/amchishty/survey-images/main/redo%20in%20github/input.png" alt="Input">
+                    </div>
+                    
+                    <hr>
+                    
+                    <p><strong>Output</strong></p>
+                    <div class="image-container">
+                        <img src="https://raw.githubusercontent.com/amchishty/survey-images/main/redo%20in%20github/output.png" alt="Output">
+                    </div>
+
+                    <div class="options-grid">
+                        <label class="option-item">
+                            <input type="radio" name="q9">
+                            <span class="option-text">Yes — both images are illustrated, so they share the same artistic style.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q9">
+                            <span class="option-text">Yes — the target image could reasonably be produced by following the visual style of the reference image.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q9">
+                            <span class="option-text">No — the reference and target use different visual styles, even though both are illustrations.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q9">
+                            <span class="option-text">No — the reference image does not depict the same scene or objects as the target image.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 14 -->
+                <div class="question-panel">
+                    <div class="question-number">Question 6 of 11</div>
+                    
+                    <div class="image-container">
+                        <img src="https://i.imgur.com/TBE0IDu.jpeg" alt="Reference image">
+                    </div>
+                    
+                    <p><strong>Prompt: Draw a bounding box around each fork.</strong></p>
+
+                    <div class="options-grid">
+                        <label class="option-item">
+                            <input type="radio" name="q14">
+                            <span class="option-text">Option 1</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q14">
+                            <span class="option-text">Option 2</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q14">
+                            <span class="option-text">Option 3</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q14">
+                            <span class="option-text">Option 4</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 16 -->
+                <div class="question-panel">
+                    <div class="question-number">Question 7 of 11</div>
+                    
+                    <div class="image-container">
+                        <img src="https://i.imgur.com/c9BPpcj.png" alt="Entity tagging example">
+                    </div>
+
+                    <div class="options-grid">
+                        <label class="option-item">
+                            <input type="radio" name="q16">
+                            <span class="option-text">Please tag only the person and their clothing items (sweater, jeans), since they are the main subject.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q16">
+                            <span class="option-text">There are many items in this image that are missing tags, including the books, the end table, the couch, the coffee mug, and the rug.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q16">
+                            <span class="option-text">There are many items in this image that are missing tags. Please make sure to tag the mug, the end table, and the lamp.</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q16">
+                            <span class="option-text">There are many items in this image that are missing tags, including the books, the end table, the couch, and the window sill.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 18 -->
+                <div class="question-panel">
+                    <div class="question-number">Question 8 of 11</div>
+                    
+                    <div class="image-container">
+                        <img src="https://i.imgur.com/w6S9pKn.png" alt="Bottles image">
+                    </div>
+                    
+                    <p><strong>How many bottles can be confidently identified as containing liquid?</strong></p>
+
+                    <div class="options-grid">
+                        <label class="option-item">
+                            <input type="radio" name="q18">
+                            <span class="option-text">10</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q18">
+                            <span class="option-text">7</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q18">
+                            <span class="option-text">9</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q18">
+                            <span class="option-text">2</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 21 -->
+                <div class="question-panel">
+                    <div class="question-number">Question 9 of 11</div>
+                    
+                    <div class="image-container">
+                        <img src="https://i.imgur.com/llNCKNh.jpeg" alt="Mugs image">
+                    </div>
+                    
+                    <p><strong>Prompt: "The mug that is closer to the laptop than the green mug, but farther from the laptop than the blue mug"</strong></p>
+
+                    <div class="options-grid">
+                        <label class="option-item">
+                            <input type="radio" name="q21">
+                            <span class="option-text">The green mug behind the laptop</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q21">
+                            <span class="option-text">The blue mug on the left</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q21">
+                            <span class="option-text">The notebook is closest to the laptop</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q21">
+                            <span class="option-text">The red mug on the right</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="q21">
+                            <span class="option-text">No mug matches this description</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">Submit Assessment</button>
+            </form>
+        </main>
+    </div>
+</body>
+</html>
